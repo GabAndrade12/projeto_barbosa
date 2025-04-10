@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo de Cookies e Formulário</title>
+    <script>
+        // Função para obter o valor do cookie pelo nome
+        function getCookie(name) {
+            let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            if (match) return match[2];
+            return null;
+        }
+
+        // Função para definir o cookie
+        function setCookie(name, value, days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = name + "=" + value + ";expires=" + date.toUTCString() + ";path=/";
+        }
+
+        // Função para mostrar o formulário de cookies
+        function showCookieNotice() {
+            const cookieConsent = getCookie('cookieConsent');
+            // Verifica se o cookie de consentimento existe. Se não existir, exibe o aviso de cookies
+            if (!cookieConsent) {
+                document.getElementById('cookie-notice').style.display = 'block';
+            } else {
+                showForm();
+            }
+        }
+
+        // Função para aceitar os cookies
+        function acceptCookies() {
+            setCookie('cookieConsent', 'accepted', 7);  // Salva o consentimento por 7 dias
+            document.getElementById('cookie-notice').style.display = 'none';  // Oculta o aviso de cookies
+            showForm();  // Exibe o formulário
+        }
+
+        // Função para exibir o formulário após aceitar os cookies
+        function showForm() {
+            const userName = getCookie('userName');
+            document.getElementById('form-container').style.display = 'block';  // Exibe o formulário
+            if (userName) {
+                document.getElementById('user-name').value = userName;  // Preenche o campo de nome com o valor salvo no cookie
+            }
+        }
+
+        function saveUserName() {
+        const userName = document.getElementById('user-name').value;
+        if (userName) {
+            // Salva o nome do usuário no Local Storage
+            localStorage.setItem('userName', userName);
+        }
+    }
+
+
+        // Função chamada no carregamento da página
+        window.onload = showCookieNotice;
+    </script>
+    <style>
+        #cookie-notice {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            display: none;
+        }
+        #cookie-notice button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        #cookie-notice button:hover {
+            background-color: #45a049;
+        }
+        #form-container {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Aviso de Cookies -->
+    <div id="cookie-notice">
+        <p>Este site utiliza cookies. Ao continuar, você aceita nossa política de cookies.</p>
+        <button onclick="acceptCookies()">Aceitar Cookies</button>
+    </div>
+
+    <!-- Formulário de Nome do Usuário -->
+    <div id="form-container">
+        <h2>Olá, insira seu nome</h2>
+        <form onsubmit="event.preventDefault(); saveUserName();">
+            <label for="user-name">Digite seu nome:</label>
+            <input type="text" id="user-name" name="user-name" placeholder="Seu nome" required>
+            <button type="submit">Salvar</button>
+        </form>
+    </div>
+
+</body>
+</html>
